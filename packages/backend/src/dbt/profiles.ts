@@ -25,10 +25,9 @@ const credentialsTarget = (
 ): CredentialsTarget => {
     switch (credentials.type) {
         case WarehouseTypes.BIGQUERY:
-            return {
+            const bqResult: CredentialsTarget = {
                 target: {
                     type: credentials.type,
-                    method: 'service-account-json',
                     project: credentials.project,
                     dataset: credentials.dataset,
                     threads: DEFAULT_THREADS,
@@ -36,20 +35,29 @@ const credentialsTarget = (
                     priority: credentials.priority,
                     retries: credentials.retries,
                     maximum_bytes_billed: credentials.maximumBytesBilled,
-                    keyfile_json: Object.fromEntries(
+                    execution_project: credentials.executionProject,
+                },
+                environment: {}
+            };
+            if (credentials.keyfileContents) {
+                bqResult.target.method = 'service-account-json';
+                bqResult.target.keyfile_json = Object.fromEntries(
                         Object.keys(credentials.keyfileContents).map((key) => [
                             key,
                             envVarReference(key),
                         ]),
-                    ),
-                    execution_project: credentials.executionProject,
-                },
-                environment: Object.fromEntries(
+                    );
+                bqResult.environment = Object.fromEntries(
                     Object.entries(credentials.keyfileContents).map(
                         ([key, value]) => [envVar(key), value],
                     ),
-                ),
-            };
+                );
+            } else {
+                // if no keyfile is provided, we assume oauth authentication
+                // by which case we can use Application Default Credentials(ADC).
+                bqResult.target.method = 'oauth';
+            }
+            return bqResult;
         case WarehouseTypes.REDSHIFT:
             return {
                 target: {
