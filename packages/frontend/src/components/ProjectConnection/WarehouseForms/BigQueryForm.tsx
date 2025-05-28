@@ -58,8 +58,9 @@ const BigQueryForm: FC<{
     const form = useFormContext();
     const [temporaryFile, setTemporaryFile] = useState<File | null>(null);
     const { savedProject } = useProjectFormContext();
-    const bigqueryConnectionExists: boolean =
-        savedProject?.warehouseConnection?.type === WarehouseTypes.BIGQUERY;
+    const keyFileContentsIsSet: boolean =
+        savedProject?.warehouseConnection?.type === WarehouseTypes.BIGQUERY &&
+        savedProject?.warehouseConnection?.keyfileContents === true;
 
     const locationField = form.getInputProps('warehouse.location');
     const executionProjectField = form.getInputProps(
@@ -115,7 +116,9 @@ const BigQueryForm: FC<{
                     // FIXME: until mantine 7.4: https://github.com/mantinedev/mantine/issues/5401#issuecomment-1874906064
                     // @ts-ignore
                     placeholder={
-                        bigqueryConnectionExists ? '**************' : 'Choose file...'
+                        keyFileContentsIsSet
+                            ? '**************'
+                            : 'Choose file...'
                     }
                     description={
                         <p>

@@ -771,16 +771,20 @@ export class ProjectModel {
             ),
         ) as DbtProjectConfig;
 
-        const nonSensitiveCredentials = sensitiveCredentials
-            ? (Object.fromEntries(
-                  Object.entries(sensitiveCredentials).filter(
-                      ([key]) =>
-                          !sensitiveCredentialsFieldNames.includes(
-                              key as AnyType,
-                          ),
-                  ),
-              ) as WarehouseCredentials)
-            : undefined;
+        let nonSensitiveCredentials: WarehouseCredentials | undefined;
+        if (sensitiveCredentials) {
+            const entriesMap = new Map();
+            Object.entries(sensitiveCredentials).forEach(([key, value]) => {
+                if (sensitiveCredentialsFieldNames.includes(key as AnyType)) {
+                    entriesMap.set(key, !!value);
+                } else {
+                    entriesMap.set(key, value);
+                }
+            });
+            nonSensitiveCredentials = Object.fromEntries(
+                entriesMap,
+            ) as WarehouseCredentials;
+        }
 
         const nonSensitiveSemanticLayerCredentials =
             sensitiveSemanticLayerCredentials

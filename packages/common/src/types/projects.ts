@@ -191,13 +191,14 @@ export type CreateWarehouseCredentials =
     | CreateSnowflakeCredentials
     | CreateDatabricksCredentials
     | CreateTrinoCredentials;
-export type WarehouseCredentials =
+export type WarehouseCredentials = (
     | SnowflakeCredentials
     | RedshiftCredentials
     | PostgresCredentials
     | BigqueryCredentials
     | DatabricksCredentials
-    | TrinoCredentials;
+    | TrinoCredentials
+) & { [K in SensitiveCredentialsFieldNames]?: boolean };
 
 export type CreatePostgresLikeCredentials =
     | CreateRedshiftCredentials
