@@ -58,8 +58,8 @@ const BigQueryForm: FC<{
     const form = useFormContext();
     const [temporaryFile, setTemporaryFile] = useState<File | null>(null);
     const { savedProject } = useProjectFormContext();
-    const requireSecrets: boolean =
-        savedProject?.warehouseConnection?.type !== WarehouseTypes.BIGQUERY;
+    const bigqueryConnectionExists: boolean =
+        savedProject?.warehouseConnection?.type === WarehouseTypes.BIGQUERY;
 
     const locationField = form.getInputProps('warehouse.location');
     const executionProjectField = form.getInputProps(
@@ -115,7 +115,7 @@ const BigQueryForm: FC<{
                     // FIXME: until mantine 7.4: https://github.com/mantinedev/mantine/issues/5401#issuecomment-1874906064
                     // @ts-ignore
                     placeholder={
-                        !requireSecrets ? '**************' : 'Choose file...'
+                        bigqueryConnectionExists ? '**************' : 'Choose file...'
                     }
                     description={
                         <p>
@@ -127,10 +127,9 @@ const BigQueryForm: FC<{
                             >
                                 how to create a key here
                             </Anchor>
-                            .
+                            . If omitted, ADC will be used.
                         </p>
                     }
-                    required={requireSecrets}
                     accept="application/json"
                     value={temporaryFile}
                     onChange={(file) => {

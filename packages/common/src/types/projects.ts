@@ -46,7 +46,7 @@ export type CreateBigqueryCredentials = {
     threads?: number;
     timeoutSeconds: number | undefined;
     priority: 'interactive' | 'batch' | undefined;
-    keyfileContents: Record<string, string>;
+    keyfileContents?: Record<string, string>;
     requireUserCredentials?: boolean;
     retries: number | undefined;
     location: string | undefined;
