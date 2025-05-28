@@ -37,16 +37,16 @@ const credentialsTarget = (
                     maximum_bytes_billed: credentials.maximumBytesBilled,
                     execution_project: credentials.executionProject,
                 },
-                environment: {}
+                environment: {},
             };
             if (credentials.keyfileContents) {
                 bqResult.target.method = 'service-account-json';
                 bqResult.target.keyfile_json = Object.fromEntries(
-                        Object.keys(credentials.keyfileContents).map((key) => [
-                            key,
-                            envVarReference(key),
-                        ]),
-                    );
+                    Object.keys(credentials.keyfileContents).map((key) => [
+                        key,
+                        envVarReference(key),
+                    ]),
+                );
                 bqResult.environment = Object.fromEntries(
                     Object.entries(credentials.keyfileContents).map(
                         ([key, value]) => [envVar(key), value],
